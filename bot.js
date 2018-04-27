@@ -59,6 +59,18 @@ else if(message.content.startsWith("owo ") && !message.content.startsWith("owo c
   });
 }
 
+//credits for karen
+else if(message.content.startsWith("owo c ") && message.author.id == "340886593722253312")
+{
+  message.channel.send("p!"+message.content.substring(4))
+  .then(logEntry(message.author.username,message.author.avatarURL,message.content))
+  .then(message.delete())
+  .catch( err => {
+    console.error(err);
+    message.channel.send("Something went wrong! :(");
+  });
+}
+
 //When a New pokemon appears or a pokemon levels up
 else if(message.author.id == config.POKECORD_ID)
 {
