@@ -8,7 +8,6 @@ function editMessage(channel,msg_id,message){
   channel.fetchMessages({around: msg_id, limit: 1})
   .then(messages => {
     const fetchedMsg = messages.first();
-    //let newContent = message.content.substring(message.content.indexOf("```"),message.content.lastIndexOf("```")+3);
     fetchedMsg.edit(message);
   });
 }
@@ -32,8 +31,7 @@ async function utilizeHook(webhook,auth_un,auth_url,content){
 function regInChannel(channel_id,message,flag)
 {
   let channel = bot.channels.get(channel_id);
-  message = message.split(" ");
-  editMessage(channel,reg_ids[flag][message[0]],message.slice(1).join(" "));
+  editMessage(channel,reg_ids[flag][message.substring(0,message.indexOf("```")).trim()],message.substring(message.indexOf("```"),message.lastIndexOf("```")+3));
 }
 
 //Logging function
@@ -95,13 +93,13 @@ else if(message.content.toLowerCase().startsWith("owo smartadd ")){
 
 else if(message.content.startsWith("owo reg "))
 {
-  regInChannel("",message.content.substring(8),0);
+  regInChannel("437271027857227809",message.content.substring(8),0);
   //logEntry(message.author.username,message.author.avatarURL,message.content);
 }
 
 else if(message.content.startsWith("owo sreg "))
 {
-  regInChannel("",message.content.substring(9),1);
+  regInChannel("438449860971200522",message.content.substring(9),1);
   //logEntry(message.author.username,message.author.avatarURL,message.content);
 }
 
