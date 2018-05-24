@@ -75,7 +75,7 @@ else if(message.content.startsWith("owo c ") && message.author.id == "3408865937
 else if(message.author.id == config.POKECORD_ID)
 {
   message.embeds.forEach(embed => {
-    if(embed.title && embed.title.startsWith("Trade between")){
+    if(embed.title && embed.title.startsWith("Trade between") && embed.title.indexOf("Dave the Daycare Dude")!= -1){
       const filter = m => (config.POKECORD_ID == m.author.id && (m.content == "Trade confirmed." || m.content == "Trade expired." || m.content == "Trade has been canceled."));
 
       message.channel.awaitMessages(filter, { time: 300000, maxMatches: 1, errors: ['time'] })
@@ -83,11 +83,12 @@ else if(message.author.id == config.POKECORD_ID)
             messages.array().forEach(msg => {
               if(msg.content == "Trade confirmed.")
               {
+                let emb = message.edits[message.edits.length-1].embeds[0];
                 let my_embed = new Discord.RichEmbed()
-                  .setTitle(embed.title)
-                  .setDescription(embed.description)
-                  .setColor(embed.color);
-                  embed.fields.forEach( field => {
+                  .setTitle(emb.title)
+                  .setDescription(emb.description)
+                  .setColor(emb.color);
+                  emb.fields.forEach( field => {
                     my_embed.addField(field.name,field.value)
                   });
                 //message.channel.send(my_embed);
