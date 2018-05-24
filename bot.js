@@ -5,21 +5,27 @@ const my_ver = require("./package.json");
 
 //Logging function
 function logEntry(auth_un,auth_url,content){
-  my_hook.edit(auth_un,auth_url)
+  logger.createWebhook(auth_un,auth_url)
   .then(
-    my_hook.edit(auth_un,auth_url)
+    webhook => webhook.edit(auth_un,auth_url)
+    .then(
+      webhook.send(content)
+    )
+    .then(
+      webhook.delete()
+    )
+    .catch(
+      err => console.error(err)
+    )
   )
-  .then(
-    my_hook.send(content)
-  )
-  .catch( err => {
-    console.error(err);
-  });
+  .catch(
+    er => console.error(er)
+  );
 }
 
 //Bot instance and Playing message
 let bot = new Discord.Client();
-let my_hook = new Discord.WebhookClient(process.env.HOOK_ID,process.env.HOOK_TOKEN);
+let logger = bot.channels.get(config.LEDGER_ID);
 bot.on("ready", function() {
   console.log('Logged in as '+bot.user.username);
   bot.user.setActivity('with Sauron!', { type: 'PLAYING' });
@@ -47,6 +53,20 @@ if(message.content.toLowerCase() == "owo ping")
 else if(message.content.toLowerCase() == "owo version")
 {
   message.channel.send(my_ver.version);
+}
+
+else if(message.content.toLowerCase().startsWith("owo smartadd ")){
+  content = message.content.split(" ").slice(2);
+  content.push("Done");
+  content.forEach(function(pokemon,closure){
+    setTimeout(function(){
+      if(!isNaN(pokemon))
+        message.channel.send("p!p add "+pokemon);
+      else
+        message.reply(pokemon);
+    },3000*closure);
+  });
+  logEntry(message.author.username,message.author.avatarURL,message.content);
 }
 
 //Every other command
