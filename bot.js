@@ -5,8 +5,10 @@ const my_ver = require("./package.json");
 
 //Logging function
 function logEntry(auth_un,auth_url,content){
-  my_hook.edit(auth_un,auth_url);
   my_hook.edit(auth_un,auth_url)
+  .then(
+    my_hook.edit(auth_un,auth_url)
+  )
   .then(
     my_hook.send(content)
   )
@@ -83,7 +85,7 @@ else if(message.author.id == config.POKECORD_ID)
             messages.array().forEach(msg => {
               if(msg.content == "Trade confirmed.")
               {
-                let emb = message.edits[message.edits.length-1].embeds[0];
+                let emb = message.edits[0].embeds[0];
                 let my_embed = new Discord.RichEmbed()
                   .setTitle(emb.title)
                   .setDescription(emb.description)
