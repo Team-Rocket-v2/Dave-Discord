@@ -3,29 +3,36 @@ const Discord = require("discord.js");
 const config = require("./config.json");
 const my_ver = require("./package.json");
 
-//Logging function
-function logEntry(auth_un,auth_url,content){
-  logger.createWebhook(auth_un,auth_url)
-  .then(
-    webhook => webhook.edit(auth_un,auth_url)
+function deleteMesage(message){
+  if(bot.guilds.get(message.guild.id).members.get(bot.user.id).hasPermission("MANAGE_MESSAGES"))
+      message.delete();
+}
+
+async function utilizeHook(webhook,auth_un,auth_url,content){
+  await webhook.edit(auth_un,auth_url)
     .then(
       webhook.send(content)
     )
-    .then(
-      webhook.delete()
-    )
     .catch(
       err => console.error(err)
+    );
+  webhook.delete();
+}
+
+//Logging function
+function logEntry(auth_un,auth_url,content){
+  
+bot.channels.get(config.LEDGER_ID).createWebhook(auth_un,auth_url)
+  .then(
+    webhook => utilizeHook(webhook,auth_un,auth_url,content)
     )
-  )
-  .catch(
-    er => console.error(er)
-  );
+    .catch(
+      er => console.error(er)
+    );
 }
 
 //Bot instance and Playing message
 let bot = new Discord.Client();
-let logger = bot.channels.get(config.LEDGER_ID);
 bot.on("ready", function() {
   console.log('Logged in as '+bot.user.username);
   bot.user.setActivity('with Sauron!', { type: 'PLAYING' });
@@ -74,7 +81,7 @@ else if(message.content.startsWith("owo ") && !message.content.startsWith("owo c
 {
   message.channel.send("p!"+message.content.substring(4))
   .then(logEntry(message.author.username,message.author.avatarURL,message.content))
-  .then(message.delete())
+  .then(deleteMesage(message))
   .catch( err => {
     console.error(err);
     message.channel.send("Something went wrong! :(");
@@ -86,7 +93,7 @@ else if(message.content.startsWith("owo c ") && message.author.id == "3408865937
 {
   message.channel.send("p!"+message.content.substring(4))
   .then(logEntry(message.author.username,message.author.avatarURL,message.content))
-  .then(message.delete())
+  .then(deleteMesage(message))
   .catch( err => {
     console.error(err);
     message.channel.send("Something went wrong! :(");
