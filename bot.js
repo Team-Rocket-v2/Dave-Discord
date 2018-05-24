@@ -2,6 +2,16 @@
 const Discord = require("discord.js");
 const config = require("./config.json");
 const my_ver = require("./package.json");
+var reg_ids = [ {"high": "449236643350708224", "med": "449236647243153408", "low": "449236651441389598" } , {"high": "449236642910175243", "med": "449236646962003969", "low": "449236651273879582" }];
+
+function editMessage(channel,msg_id,message){
+  channel.fetchMessages({around: msg_id, limit: 1})
+  .then(messages => {
+    const fetchedMsg = messages.first();
+    //let newContent = message.content.substring(message.content.indexOf("```"),message.content.lastIndexOf("```")+3);
+    fetchedMsg.edit(message);
+  });
+}
 
 function deleteMesage(message){
   if(bot.guilds.get(message.guild.id).members.get(bot.user.id).hasPermission("MANAGE_MESSAGES"))
@@ -17,6 +27,13 @@ async function utilizeHook(webhook,auth_un,auth_url,content){
       err => console.error(err)
     );
   webhook.delete();
+}
+
+function regInChannel(channel_id,message,flag)
+{
+  let channel = bot.channels.get(channel_id);
+  message = message.split(" ");
+  editMessage(channel,reg_ids[flag][message[0]],message.slice(1).join(" "));
 }
 
 //Logging function
@@ -74,6 +91,18 @@ else if(message.content.toLowerCase().startsWith("owo smartadd ")){
     },3000*closure);
   });
   logEntry(message.author.username,message.author.avatarURL,message.content);
+}
+
+else if(message.content.startsWith("owo reg "))
+{
+  regInChannel("",message.content.substring(8),0);
+  //logEntry(message.author.username,message.author.avatarURL,message.content);
+}
+
+else if(message.content.startsWith("owo sreg "))
+{
+  regInChannel("",message.content.substring(9),1);
+  //logEntry(message.author.username,message.author.avatarURL,message.content);
 }
 
 //Every other command
