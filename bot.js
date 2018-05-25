@@ -19,7 +19,8 @@ function processMessage(message,fetchedMsg){
   if(message.substring(message.length - 1) == "+")
   {
     message = fetchedMsg.edits[0].content+message.substring(0,message.length-1);
-    message.replace("``````","");
+    let curse = message.indexOf("``````");
+    message = message.substring(0,curse) + message.substring(curse+6);
   }
   return message;
 }
@@ -111,7 +112,7 @@ else if(message.content.toLowerCase().startsWith("owo smartadd ")){
   logEntry(message.author.username,message.author.avatarURL,message.content);
 }
 
-/*else if(message.content.startsWith("owo add "))
+else if(message.content.startsWith("owo add "))
 {
   if(regInChannel("437271027857227809",message.content.substring(8)+"+",0) + regInChannel("438449860971200522",message.content.substring(8)+"+",1) == 0)
   {
@@ -123,7 +124,6 @@ else if(message.content.toLowerCase().startsWith("owo smartadd ")){
     message.reply("I don't feel so good...");
   }
 }
-*/
 
 else if(message.content.startsWith("owo reg "))
 {
@@ -195,7 +195,6 @@ else if(message.author.id == config.POKECORD_ID)
                   emb.fields.forEach( field => {
                     my_embed.addField(field.name,field.value)
                   });
-                //message.channel.send(my_embed);
                 logEntry(message.author.username,message.author.avatarURL,my_embed);
               }
           });
