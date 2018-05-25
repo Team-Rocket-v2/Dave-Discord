@@ -8,11 +8,20 @@ function editMessage(channel,msg_id,message){
   if(channel.fetchMessages({around: msg_id, limit: 1})
   .then(messages => {
     const fetchedMsg = messages.first();
-    fetchedMsg.edit(message);
+    fetchedMsg.edit(processMessage(message,fetchedMsg));
   }))
   return 0;
   else
   return 1;
+}
+
+function processMessage(message,fetchedMsg){
+  if(message.substring(message.length - 1) == "+")
+  {
+    message = fetchedMsg.edits[0].content+message.substring(0,message.length-1);
+    message.replace("``````","");
+  }
+  return message;
 }
 
 function deleteMesage(message){
@@ -35,12 +44,14 @@ function regInChannel(channel_id,message,flag)
 {
   let channel = bot.channels.get(channel_id);
   let msg_id = reg_ids[flag][message.substring(0,message.indexOf("```")).trim()];
-  message = message.substring(message.indexOf("```"),message.lastIndexOf("```")+3);
+  let msg = message.substring(message.indexOf("```"),message.lastIndexOf("```")+3);
+  if(message.substring(message.length-1) == "+")
+    msg = msg + "+";
   if(msg_id == undefined)
   return 1;
-  if(message.length<=0)
+  if(msg.length<=0)
   return 1;
-  return editMessage(channel,msg_id,message);
+  return editMessage(channel,msg_id,msg);
 }
 
 //Logging function
@@ -98,6 +109,19 @@ else if(message.content.toLowerCase().startsWith("owo smartadd ")){
     },3000*closure);
   });
   logEntry(message.author.username,message.author.avatarURL,message.content);
+}
+
+else if(message.content.startsWith("owo add "))
+{
+  if(regInChannel("437271027857227809",message.content.substring(8)+"+",0) + regInChannel("438449860971200522",message.content.substring(8)+"+",1) == 0)
+  {
+    logEntry(message.author.username,message.author.avatarURL,message.content);
+    deleteMesage(message);
+  }
+  else
+  {
+    message.reply("I don't feel so good...");
+  }
 }
 
 else if(message.content.startsWith("owo reg "))
