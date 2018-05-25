@@ -111,7 +111,7 @@ else if(message.content.toLowerCase().startsWith("owo smartadd ")){
   logEntry(message.author.username,message.author.avatarURL,message.content);
 }
 
-else if(message.content.startsWith("owo add "))
+/*else if(message.content.startsWith("owo add "))
 {
   if(regInChannel("437271027857227809",message.content.substring(8)+"+",0) + regInChannel("438449860971200522",message.content.substring(8)+"+",1) == 0)
   {
@@ -123,6 +123,7 @@ else if(message.content.startsWith("owo add "))
     message.reply("I don't feel so good...");
   }
 }
+*/
 
 else if(message.content.startsWith("owo reg "))
 {
