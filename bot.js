@@ -5,11 +5,14 @@ const my_ver = require("./package.json");
 var reg_ids = [ {"high": "449236643350708224", "med": "449236647243153408", "low": "449236651441389598" } , {"high": "449236642910175243", "med": "449236646962003969", "low": "449236651273879582" }];
 
 function editMessage(channel,msg_id,message){
-  channel.fetchMessages({around: msg_id, limit: 1})
+  if(channel.fetchMessages({around: msg_id, limit: 1})
   .then(messages => {
     const fetchedMsg = messages.first();
     fetchedMsg.edit(message);
-  });
+  }))
+  return 0;
+  else
+  return 1;
 }
 
 function deleteMesage(message){
@@ -31,7 +34,13 @@ async function utilizeHook(webhook,auth_un,auth_url,content){
 function regInChannel(channel_id,message,flag)
 {
   let channel = bot.channels.get(channel_id);
-  editMessage(channel,reg_ids[flag][message.substring(0,message.indexOf("```")).trim()],message.substring(message.indexOf("```"),message.lastIndexOf("```")+3));
+  let msg_id = reg_ids[flag][message.substring(0,message.indexOf("```")).trim()];
+  message = message.substring(message.indexOf("```"),message.lastIndexOf("```")+3);
+  if(msg_id == undefined)
+  return 1;
+  if(message.length<=0)
+  return 1;
+  return editMessage(channel,msg_id,message);
 }
 
 //Logging function
@@ -93,14 +102,28 @@ else if(message.content.toLowerCase().startsWith("owo smartadd ")){
 
 else if(message.content.startsWith("owo reg "))
 {
-  regInChannel("437271027857227809",message.content.substring(8),0);
-  //logEntry(message.author.username,message.author.avatarURL,message.content);
+  if(regInChannel("437271027857227809",message.content.substring(8),0) == 0)
+  {
+  logEntry(message.author.username,message.author.avatarURL,message.content);
+  deleteMesage(message);
+  }
+  else
+  {
+    message.reply("I don't feel so good...");
+  }
 }
 
 else if(message.content.startsWith("owo sreg "))
 {
-  regInChannel("438449860971200522",message.content.substring(9),1);
-  //logEntry(message.author.username,message.author.avatarURL,message.content);
+  if(regInChannel("438449860971200522",message.content.substring(9),1) == 0)
+  {
+  logEntry(message.author.username,message.author.avatarURL,message.content);
+  deleteMesage(message);
+  }
+  else
+  {
+    message.reply("I don't feel so good...")
+  }
 }
 
 //Every other command
