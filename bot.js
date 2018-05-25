@@ -68,7 +68,7 @@ bot.on("error", function(err) {
 });
 
 //When a message is received
-/*bot.on("message", function(message) {
+bot.on("message", function(message) {
 
 if(message.channel.type == "dm") return ;
 if(!message.member || !message.member.roles.find("name", config.EMP_ROLE)) return;
@@ -183,6 +183,6 @@ else if(message.author.id == config.POKECORD_ID)
 }
 
 });
-*/
+
 //login with token
 bot.login(process.env.BOT_TOKEN);
