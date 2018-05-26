@@ -3,6 +3,7 @@ const Discord = require("discord.js");
 const config = require("./config.json");
 const my_ver = require("./package.json");
 var reg_ids = [ {"high": "449236643350708224", "med": "449236647243153408", "low": "449236651441389598" } , {"high": "449236642910175243", "med": "449236646962003969", "low": "449236651273879582" }];
+//var tfrHook = new Discord.WebhookClient(process.env.HOOK_ID,process.env.HOOK_TOKEN);
 
 function editMessage(channel,msg_id,message){
   if(channel.fetchMessages({around: msg_id, limit: 1})
@@ -14,6 +15,56 @@ function editMessage(channel,msg_id,message){
   else
   return 1;
 }
+
+function staffHook(channel,msg_id,notes,staff_id)
+{
+  channel.fetchMessages({around: msg_id, limit: 1})
+  .then(messages => {
+    var emb = messages.first().edits[0].embeds[0];
+    let my_embed = new Discord.RichEmbed()
+      .setTitle(emb.title)
+      .setDescription(emb.description)
+      .setColor(emb.color);
+    emb.fields.forEach( field => {
+      my_embed.addField(field.name,field.value)
+    });
+    if(notes!=null)
+      my_embed.setFooter(notes);
+    var staff = bot.users.get(staff_id);
+    logEntry(config.COMPLETED_ID,staff.username,staff.avatarURL,my_embed);
+  })
+  .catch(
+    err => {
+      console.error(err);
+      return 1;
+    });
+  return 0;
+}
+
+/*
+function createHook(channel,msg_id,cust_id){
+  channel.fetchMessages({around: msg_id, limit: 1})
+  .then(messages => {
+    var emb = messages.first().edits[0].embeds[0];
+    let my_embed = new Discord.RichEmbed()
+      .setTitle(emb.title)
+      .setDescription(emb.description)
+      .setColor(emb.color);
+    emb.fields.forEach( field => {
+      my_embed.addField(field.name,field.value)
+    });
+    my_embed.addBlankField()
+      .addField("Customer:", "<@"+cust_id+">");
+    tfrHook.send(my_embed);
+  })
+  .catch(
+    err => {
+      console.error(err);
+      return 1;
+    });
+  return 0;
+}
+*/
 
 function processMessage(message,fetchedMsg){
   if(message.substring(message.length - 1) == "+")
@@ -55,10 +106,11 @@ function regInChannel(channel_id,message,flag)
   return editMessage(channel,msg_id,msg);
 }
 
+
+
 //Logging function
-function logEntry(auth_un,auth_url,content){
-  
-bot.channels.get(config.LEDGER_ID).createWebhook(auth_un,auth_url)
+function logEntry(channel_id,auth_un,auth_url,content){ 
+bot.channels.get(channel_id).createWebhook(auth_un,auth_url)
   .then(
     webhook => utilizeHook(webhook,auth_un,auth_url,content)
     )
@@ -109,14 +161,14 @@ else if(message.content.toLowerCase().startsWith("owo smartadd ")){
         message.reply(pokemon);
     },3000*closure);
   });
-  logEntry(message.author.username,message.author.avatarURL,message.content);
+  logEntry(config.LEDGER_ID,message.author.username,message.author.avatarURL,message.content);
 }
 
 else if(message.content.startsWith("owo add "))
 {
   if(regInChannel("437271027857227809",message.content.substring(8)+"+",0) + regInChannel("438449860971200522",message.content.substring(8)+"+",1) == 0)
   {
-    logEntry(message.author.username,message.author.avatarURL,message.content);
+    logEntry(config.LEDGER_ID,message.author.username,message.author.avatarURL,message.content);
     deleteMesage(message);
   }
   else
@@ -129,7 +181,7 @@ else if(message.content.startsWith("owo reg "))
 {
   if(regInChannel("437271027857227809",message.content.substring(8),0) == 0)
   {
-  logEntry(message.author.username,message.author.avatarURL,message.content);
+  logEntry(config.LEDGER_ID,message.author.username,message.author.avatarURL,message.content);
   deleteMesage(message);
   }
   else
@@ -142,7 +194,7 @@ else if(message.content.startsWith("owo sreg "))
 {
   if(regInChannel("438449860971200522",message.content.substring(9),1) == 0)
   {
-  logEntry(message.author.username,message.author.avatarURL,message.content);
+  logEntry(config.LEDGER_ID,message.author.username,message.author.avatarURL,message.content);
   deleteMesage(message);
   }
   else
@@ -151,11 +203,52 @@ else if(message.content.startsWith("owo sreg "))
   }
 }
 
+/*
+else if(message.content.startsWith("owo tfr "))
+{
+  if(createHook(message.channel,message.content.split(" ")[2],message.mentions.users.first().id) != 0)
+    message.reply("I don't feel so good...");
+  else
+  {
+    logEntry(config.LEDGER_ID,message.author.username,message.author.avatarURL,message.content);
+    deleteMesage(message);
+  }
+}
+*/
+
+else if(message.content.toLowerCase().startsWith("owo nikki "))
+{
+  var notes = null;
+  if(message.content.length>29)
+    notes = message.content.split(" ").slice(3).join(" ");
+  if(staffHook(message.channel,message.content.split(" ")[2],notes,config.NIKKI_ID) != 0)
+    message.reply("I don't feel so good...");
+  else
+  {
+    logEntry(config.LEDGER_ID,message.author.username,message.author.avatarURL,message.content);
+    deleteMesage(message);
+  }
+}
+
+else if(message.content.toLowerCase().startsWith("owo romeo "))
+{
+  var notes = null;
+  if(message.content.length>29)
+    notes = message.content.split(" ").slice(3).join(" ");
+  if(staffHook(message.channel,message.content.split(" ")[2],notes,config.ROMEO_ID) != 0)
+    message.reply("I don't feel so good...");
+  else
+  {
+    logEntry(config.LEDGER_ID,message.author.username,message.author.avatarURL,message.content);
+    deleteMesage(message);
+  }
+}
+
 //Every other command
 else if(message.content.startsWith("owo ") && !message.content.startsWith("owo c "))
 {
   message.channel.send("p!"+message.content.substring(4))
-  .then(logEntry(message.author.username,message.author.avatarURL,message.content))
+  .then(logEntry(config.LEDGER_ID,message.author.username,message.author.avatarURL,message.content))
   .then(deleteMesage(message))
   .catch( err => {
     console.error(err);
@@ -167,7 +260,7 @@ else if(message.content.startsWith("owo ") && !message.content.startsWith("owo c
 else if(message.content.startsWith("owo c ") && message.author.id == "340886593722253312")
 {
   message.channel.send("p!"+message.content.substring(4))
-  .then(logEntry(message.author.username,message.author.avatarURL,message.content))
+  .then(logEntry(config.LEDGER_ID,message.author.username,message.author.avatarURL,message.content))
   .then(deleteMesage(message))
   .catch( err => {
     console.error(err);
@@ -195,7 +288,7 @@ else if(message.author.id == config.POKECORD_ID)
                   emb.fields.forEach( field => {
                     my_embed.addField(field.name,field.value)
                   });
-                logEntry(message.author.username,message.author.avatarURL,my_embed);
+                logEntry(config.LEDGER_ID,message.author.username,message.author.avatarURL,my_embed);
               }
           });
         })
