@@ -257,7 +257,7 @@ else if(message.content.startsWith("owo ") && !message.content.startsWith("owo c
 }
 
 //credits for karen
-else if(message.content.startsWith("owo c ") && message.author.id == "340886593722253312")
+else if(message.content.startsWith("owo c ") && (message.author.id == "340886593722253312" || message.author.id == config.ROMEO_ID))
 {
   message.channel.send("p!"+message.content.substring(4))
   .then(logEntry(config.LEDGER_ID,message.author.username,message.author.avatarURL,message.content))
