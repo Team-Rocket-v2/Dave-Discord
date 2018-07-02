@@ -136,6 +136,7 @@ bot.on("message", function(message) {
 
 if(message.channel.type == "dm") return ;
 if(!message.member || !message.member.roles.find("name", config.EMP_ROLE)) return;
+if(message.author.id == "424565819867922444") return;
 
 //ping
 if(message.content.toLowerCase() == "owo ping")
