@@ -245,6 +245,20 @@ else if(message.content.toLowerCase().startsWith("owo romeo "))
   }
 }
 
+else if(message.content.toLowerCase().startsWith("owo bastet "))
+{
+  var notes = null;
+  if(message.content.length>30)
+    notes = message.content.split(" ").slice(3).join(" ");
+  if(staffHook(message.channel,message.content.split(" ")[2],notes,config.BASTET_ID) != 0)
+    message.reply("I don't feel so good...");
+  else
+  {
+    logEntry(config.LEDGER_ID,message.author.username,message.author.avatarURL,message.content);
+    deleteMesage(message);
+  }
+}
+
 //Every other command
 else if(message.content.startsWith("owo ") && !message.content.startsWith("owo c "))
 {

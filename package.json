@@ -1,6 +1,6 @@
 {
   "name": "dave",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "Daycare Employee Management System",
   "main": "bot.js",
   "scripts": {
