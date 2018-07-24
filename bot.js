@@ -123,7 +123,8 @@ bot.channels.get(channel_id).createWebhook(auth_un,auth_url)
 let bot = new Discord.Client();
 bot.on("ready", function() {
   console.log('Logged in as '+bot.user.username);
-  bot.user.setActivity('Daycare Management!', { type: 'PLAYING' });
+  bot.user.setStatus('invisible')
+    .catch(console.log);
 });
 
 //error listener
